@@ -4,8 +4,12 @@
 package proto
 
 import (
+	context "context"
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
+	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -124,4 +128,84 @@ var fileDescriptor_9dafb169863ab86f = []byte{
 	0x16, 0x95, 0x65, 0x26, 0xa7, 0x0a, 0x69, 0x70, 0x31, 0x3b, 0xa6, 0xa4, 0x08, 0xf1, 0x41, 0xac,
 	0xd3, 0x83, 0x5a, 0x22, 0xc5, 0x0f, 0xe7, 0x43, 0x4c, 0x53, 0x62, 0x48, 0x62, 0x03, 0x8b, 0x18,
 	0x03, 0x02, 0x00, 0x00, 0xff, 0xff, 0xe9, 0xf5, 0x4c, 0x34, 0xa1, 0x00, 0x00, 0x00,
+}
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConn
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion4
+
+// AddServiceClient is the client API for AddService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type AddServiceClient interface {
+	Add(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
+}
+
+type addServiceClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewAddServiceClient(cc *grpc.ClientConn) AddServiceClient {
+	return &addServiceClient{cc}
+}
+
+func (c *addServiceClient) Add(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/proto.AddService/Add", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AddServiceServer is the server API for AddService service.
+type AddServiceServer interface {
+	Add(context.Context, *Request) (*Response, error)
+}
+
+// UnimplementedAddServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedAddServiceServer struct {
+}
+
+func (*UnimplementedAddServiceServer) Add(ctx context.Context, req *Request) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Add not implemented")
+}
+
+func RegisterAddServiceServer(s *grpc.Server, srv AddServiceServer) {
+	s.RegisterService(&_AddService_serviceDesc, srv)
+}
+
+func _AddService_Add_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Request)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AddServiceServer).Add(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.AddService/Add",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AddServiceServer).Add(ctx, req.(*Request))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _AddService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "proto.AddService",
+	HandlerType: (*AddServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Add",
+			Handler:    _AddService_Add_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "add/add.proto",
 }

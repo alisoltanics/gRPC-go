@@ -21,7 +21,7 @@ func main() {
 		panic(err)
 	}
 	srv := grpc.NewServer()
-	pb.RegisterAddServiceServer(s, &server{})
+	pb.RegisterAddServiceServer(srv, &server{})
 
 	if e := srv.Serve(listener); e != nil {
 		panic(err)
